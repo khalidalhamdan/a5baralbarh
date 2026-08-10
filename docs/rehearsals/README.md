@@ -39,7 +39,7 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    ./scripts/run-staging-rehearsal.sh
    ```
 
-   The helper script validates:
+   The helper script validates and exits with failure if any gate fails:
 
    - episode entered `needs_review`
    - `estimated_seconds` is `480..720`
@@ -47,6 +47,7 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - at least one source URL per segment
    - final mix exists and is valid
    - at least one licensed music track was attached
+   - prints publish delivery rows (if any) for idempotency verification
 
 3. Verify run outcome in DB:
 
