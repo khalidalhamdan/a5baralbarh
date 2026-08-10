@@ -54,6 +54,15 @@ From a machine with `.env` configured for staging:
 export ADMIN_BASE_URL=https://<your-lovable-app>
 export WORKER_TRIGGER_TOKEN=<token>
 export DATABASE_URL=<postgres-url>
+./scripts/staging-preflight.sh
+```
+
+Then run:
+
+```bash
+export ADMIN_BASE_URL=https://<your-lovable-app>
+export WORKER_TRIGGER_TOKEN=<token>
+export DATABASE_URL=<postgres-url>
 ./scripts/staging-rehearsal-operator.sh
 ```
 

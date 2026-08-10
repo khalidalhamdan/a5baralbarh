@@ -25,6 +25,10 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - `PUBLISHING_ENABLED=false`
    - `WORKER_TRIGGER_TOKEN`, provider keys, Supabase URL/key, and `WORKER_TRIGGER_TOKEN` are set
    - one default music track has `rights_confirmed=true`
+   - run:
+     ```bash
+     ./scripts/staging-preflight.sh
+     ```
 2. Use the operator (recommended, one-command sequence):
 
    ```bash
