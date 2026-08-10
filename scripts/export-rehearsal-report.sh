@@ -15,6 +15,7 @@ run_sql() { psql "$DATABASE_URL" --no-align --tuples-only -c "$1"; }
 episode_status=$(run_sql "select status from episodes where id='${EPISODE_ID}';")
 created_at=$(run_sql "select created_at from episodes where id='${EPISODE_ID}';")
 updated_at=$(run_sql "select updated_at from episodes where id='${EPISODE_ID}';")
+approved_at=$(run_sql "select coalesce(to_char(approved_at AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"'),'') from episodes where id='${EPISODE_ID}';")
 estimated=$(run_sql "select coalesce(estimated_seconds,0) from episodes where id='${EPISODE_ID}';")
 audio_checksum=$(run_sql "select coalesce(audio_checksum,'') from episodes where id='${EPISODE_ID}';")
 segments=$(run_sql "select count(*) from script_segments s join scripts sc on sc.id=s.script_id where sc.episode_id='${EPISODE_ID}';")
@@ -37,6 +38,8 @@ cost_sar=$(run_sql "select coalesce(sum(cost_sar),0) from provider_usage where e
 audit_count=$(run_sql "select count(*) from audit_events where entity_type='episode' and entity_id='${EPISODE_ID}';")
 host_a_voice="${ELEVENLABS_HOST_A_VOICE_ID:--}"
 host_b_voice="${ELEVENLABS_HOST_B_VOICE_ID:--}"
+voice_approval="${VOICE_QUALITY_APPROVAL:-required_before_production}"
+duplicate_ok="${DUPLICATE_PREVENTION_OK:-required_before_publish}"
 commit="$(git rev-parse --short HEAD)"
 
 cat > "$OUT" <<EOF
@@ -45,6 +48,7 @@ cat > "$OUT" <<EOF
 ## Timing
 - Episode created at (UTC): ${created_at}
 - Episode updated at (UTC): ${updated_at}
+- Episode approved at (UTC): ${approved_at}
 - Commit: ${commit}
 - Environment: staging
 - Auto-publish expected off: true (must confirm after run)
@@ -75,9 +79,9 @@ cat > "$OUT" <<EOF
 ## Review checklist
 - Voice A ID: ${host_a_voice}
 - Voice B ID: ${host_b_voice}
-- Saudi-listener approval: TODO (required before production)
-- Owner approval timestamp: TODO
-- Duplicate-prevention expected: second publish should not append duplicate external IDs
+- Saudi-listener approval: ${voice_approval}
+- Owner approval timestamp: ${approved_at}
+- Duplicate-prevention status: ${duplicate_ok}
 EOF
 
 echo "Wrote rehearsal report to $OUT"

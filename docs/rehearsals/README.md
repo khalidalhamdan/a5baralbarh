@@ -23,12 +23,17 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
 
 1. Confirm secrets and safety
    - `PUBLISHING_ENABLED=false`
-   - `WORKER_TRIGGER_TOKEN`, provider keys, Supabase URL/key, and `WORKER_TRIGGER_TOKEN` are set
-   - one default music track has `rights_confirmed=true`
-   - run:
-     ```bash
-     ./scripts/staging-preflight.sh
-     ```
+     - `WORKER_TRIGGER_TOKEN`, provider keys, Supabase URL/key, and `WORKER_TRIGGER_TOKEN` are set
+     - one default music track has `rights_confirmed=true`
+     - run:
+         ```bash
+         ./scripts/staging-preflight.sh
+         ```
+   Optional report context:
+   - `VOICE_QUALITY_APPROVAL` (for example: `approved` or `needs_revision`)
+   - `DUPLICATE_PREVENTION_OK` (for example: `pass`)  
+
+   Use these when exporting the report so review evidence is explicit.
 2. Use the operator (recommended, one-command sequence):
 
    ```bash

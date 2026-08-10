@@ -7,7 +7,9 @@ Use this exact sequence:
 1. In your Lovable workspace, go to **Project settings → Git → GitHub**.
 2. Create/confirm a workspace GitHub connection.
 3. Connect the project to GitHub and let Lovable create the linked repository.
-4. In that same repo, switch to the intended branch (usually `main`) from Lovable’s branch picker.
+4. In Lovable, open **Project settings → Git → GitHub** and confirm the linked repository branch.
+   - Lovable creates/maintains one synced repository and one synced branch at a time.
+   - If you need to work on this exact repo, use this as the source of truth and keep changes on `main` unless you intentionally switch branch in settings.
 5. Pull the latest from GitHub and confirm sync in both directions.
 6. Push your latest code from local as needed; Lovable should sync back into the project.
 7. In Lovable **Cloud → Jobs**, schedule one job at `06:00 Asia/Riyadh` to trigger your daily run endpoint.

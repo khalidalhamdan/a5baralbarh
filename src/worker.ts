@@ -31,6 +31,12 @@ export async function collectDaily() {
     if (generated.segments.length < 5 || generated.segments.length > 8) {
       throw new Error("Episode should contain between 5 and 8 segments");
     }
+    if (generated.segments.some((segment) => !segment.sourceUrls?.length)) {
+      throw new Error("Every segment must include at least one source URL");
+    }
+    if (generated.estimatedSeconds < 480 || generated.estimatedSeconds > 720) {
+      throw new Error(`Generated duration ${Math.round(generated.estimatedSeconds)}s is outside allowed range`);
+    }
     const speakers = new Set(generated.segments.map((segment) => segment.speaker));
     if (!speakers.has("host_a") || !speakers.has("host_b")) {
       throw new Error("Episode script must include both host_a and host_b");
