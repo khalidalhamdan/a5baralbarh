@@ -113,3 +113,12 @@ PUBLISHING_LOCK_CHECK=require_false scripts/objective-evidence-check.sh
 
 - No local Node runtime in this sandbox, so `pnpm objective:ci` cannot execute here.
 - No external network access from shell, so GitHub and provider API checks are manual from your staging environment.
+
+## Note on staging preflight
+
+- `scripts/staging-preflight.sh` now fails fast if any required runtime secret is missing:
+  - `OPENAI_API_KEY`
+  - ElevenLabs keys + both voice IDs
+  - Transistor credentials
+  - Telegram credentials
+  - R2 credentials

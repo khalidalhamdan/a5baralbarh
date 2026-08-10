@@ -32,28 +32,50 @@ check_flag "active feeds" "$feeds_active" ">" "gt0"
 licensed_music=$(run_sql "select count(*) from music_tracks where is_default=true and rights_confirmed=true;")
 check_flag "default licensed music tracks" "$licensed_music" ">" "gt0"
 
+fail_if_missing() {
+  local label="$1" value="$2"
+  if [ -z "$value" ]; then
+    echo "FAIL: ${label} missing"
+    exit 1
+  fi
+  echo "PASS: ${label} present"
+}
+
 if [ -n "${OPENAI_API_KEY:-}" ]; then
   echo "PASS: OPENAI_API_KEY present"
 else
-  echo "WARN: OPENAI_API_KEY missing"
+  fail_if_missing "OPENAI_API_KEY" "${OPENAI_API_KEY:-}"
 fi
 
 if [ -n "${ELEVENLABS_API_KEY:-}" ] && [ -n "${ELEVENLABS_HOST_A_VOICE_ID:-}" ] && [ -n "${ELEVENLABS_HOST_B_VOICE_ID:-}" ]; then
   echo "PASS: ElevenLabs credentials present"
 else
-  echo "WARN: ElevenLabs creds incomplete"
+  fail_if_missing "ELEVENLABS_API_KEY" "${ELEVENLABS_API_KEY:-}"
+  fail_if_missing "ELEVENLABS_HOST_A_VOICE_ID" "${ELEVENLABS_HOST_A_VOICE_ID:-}"
+  fail_if_missing "ELEVENLABS_HOST_B_VOICE_ID" "${ELEVENLABS_HOST_B_VOICE_ID:-}"
 fi
 
 if [ -n "${TRANSISTOR_API_KEY:-}" ] && [ -n "${TRANSISTOR_SHOW_ID:-}" ]; then
   echo "PASS: Transistor credentials present"
 else
-  echo "WARN: Transistor creds incomplete"
+  fail_if_missing "TRANSISTOR_API_KEY" "${TRANSISTOR_API_KEY:-}"
+  fail_if_missing "TRANSISTOR_SHOW_ID" "${TRANSISTOR_SHOW_ID:-}"
 fi
 
 if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
   echo "PASS: Telegram creds present"
 else
-  echo "WARN: Telegram creds incomplete"
+  fail_if_missing "TELEGRAM_BOT_TOKEN" "${TELEGRAM_BOT_TOKEN:-}"
+  fail_if_missing "TELEGRAM_CHAT_ID" "${TELEGRAM_CHAT_ID:-}"
+fi
+
+if [ -n "${R2_ENDPOINT:-}" ] && [ -n "${R2_ACCESS_KEY_ID:-}" ] && [ -n "${R2_SECRET_ACCESS_KEY:-}" ] && [ -n "${R2_BUCKET:-}" ]; then
+  echo "PASS: R2 credentials present"
+else
+  fail_if_missing "R2_ENDPOINT" "${R2_ENDPOINT:-}"
+  fail_if_missing "R2_ACCESS_KEY_ID" "${R2_ACCESS_KEY_ID:-}"
+  fail_if_missing "R2_SECRET_ACCESS_KEY" "${R2_SECRET_ACCESS_KEY:-}"
+  fail_if_missing "R2_BUCKET" "${R2_BUCKET:-}"
 fi
 
 if [ -n "${WORKER_TRIGGER_TOKEN:-}" ]; then

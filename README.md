@@ -36,6 +36,7 @@ Use the stage-gated rehearsal scripts:
 - Keep private audio in R2. Store only object keys or short-lived signed URLs in the database.
 - Configure Supabase backups and point-in-time recovery before launch.
 - Use GitHub for source control and CI/CD, but treat Lovable as the deployment host for the UI where possible.
+- If your goal is fully replacing Railway control-plane services, follow the canonical checklist in `docs/lovable-golive-execution-guide.md` before you enable publishing.
 - If you are fully moving from Railway, treat this README + `docs/lovable-connect-playbook.md` + `docs/lovable-first-setup-checklist.md` as the canonical path.
 
 ### Lovable replacement map
