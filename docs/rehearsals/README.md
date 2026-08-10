@@ -31,6 +31,12 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    curl -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
      -H "x-worker-token: $WORKER_TRIGGER_TOKEN" \
      -H "Origin: $ADMIN_BASE_URL"
+
+   You can also run:
+
+   ```bash
+   ./scripts/run-staging-rehearsal.sh
+   ```
    ```
 
 3. Verify run outcome in DB:
