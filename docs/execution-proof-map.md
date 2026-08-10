@@ -98,7 +98,15 @@ Record:
 You can run a deterministic post-run check:
 
 ```bash
-EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> scripts/objective-evidence-check.sh
+EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> \
+PUBLISHING_LOCK_CHECK=report scripts/objective-evidence-check.sh
+```
+
+For an explicit post-publish safety audit requiring lock disabled:
+
+```bash
+EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> \
+PUBLISHING_LOCK_CHECK=require_false scripts/objective-evidence-check.sh
 ```
 
 ## Current known blockers (this execution environment)
