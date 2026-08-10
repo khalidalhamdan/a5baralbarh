@@ -112,6 +112,10 @@ export SESSION_COOKIE='<browser session cookie>'
 ./scripts/objective-e2e.sh
 ```
 
+Controlled rehearsal window:
+- Set `PUBLISHING_ENABLED=true` in staging secrets/env just before step 3 of the objective run.
+- Set `PUBLISHING_ENABLED=false` immediately after the run.
+
 Or via npm:
 
 ```bash
