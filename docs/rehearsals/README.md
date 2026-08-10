@@ -42,9 +42,10 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    The helper script validates and exits with failure if any gate fails:
 
    - episode entered `needs_review`
+   - both `host_a` and `host_b` are present
    - `estimated_seconds` is `480..720`
    - at least 5 and at most 8 segments exist
-   - at least one source URL per segment
+   - each segment has at least one source URL
    - final mix exists and is valid
    - at least one licensed music track was attached
    - prints publish delivery rows (if any) for idempotency verification
