@@ -29,7 +29,7 @@ export async function collectDaily() {
     await db()`update episodes set status='scripting' where id=${episode.id}`;
     const generated = await new OpenAITextProvider().createEpisode({ stories, targetSeconds:600 });
     const [script] = await db()`insert into scripts(episode_id,version,content) values(${episode.id},1,${db().json(generated)}) returning *`;
-    for (const [position,segment] of generated.segments.entries()) await db()`insert into script_segments(id,script_id,story_id,speaker,position,text,source_urls,pronunciation_notes) values(${segment.id},${script.id},${segment.storyId},${segment.speaker},${position},${segment.text},${db().json(segment.sourceUrls)},${db().json(segment.pronunciationNotes)})`;
+    for (const [position,segment] of generated.segments.entries()) await db()`insert into script_segments(id,script_id,speaker,position,text,source_urls,pronunciation_notes) values(${segment.id},${script.id},${segment.speaker},${position},${segment.text},${db().json(segment.sourceUrls)},${db().json(segment.pronunciationNotes)})`;
     await db()`update episodes set title=${generated.title},description=${generated.description},summary=${generated.summary},telegram_caption=${generated.telegramCaption},estimated_seconds=${Math.round(generated.estimatedSeconds)},status='synthesizing',updated_at=now() where id=${episode.id}`;
     await audit("episode.scripted","episode",episode.id,{ stories:stories.length,segments:generated.segments.length });
     await synthesizeAndMix(episode.id, script.id, generated.segments);

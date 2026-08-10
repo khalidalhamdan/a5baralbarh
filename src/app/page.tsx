@@ -1,4 +1,5 @@
-import { Activity, AudioLines, CircleCheck, Clock3, Coins, Headphones, Newspaper, Radio, Rss, Settings, ShieldCheck, Sparkles, TriangleAlert } from "lucide-react";
+import { Activity, AudioLines, CircleCheck, Clock3, Coins, Newspaper, Sparkles, TriangleAlert } from "lucide-react";
+import { AdminSidebar } from "@/components/admin-sidebar";
 
 const stages = [
   ["جمع الأخبار", "تم", "08:00"], ["التحقق والترتيب", "تم", "08:04"], ["كتابة الحوار", "تم", "08:08"],
@@ -8,11 +9,7 @@ const stories = ["إطلاق مبادرة وطنية جديدة للذكاء ا�
 
 export default function Dashboard() {
   return <main className="shell">
-    <aside className="sidebar">
-      <div className="brand"><span className="brandMark"><Radio size={22}/></span><div><b>سوالف اليوم</b><small>غرفة الأخبار الذكية</small></div></div>
-      <nav>{[[Activity,"نظرة عامة",true],[Headphones,"الحلقات"],[Rss,"المصادر"],[AudioLines,"الأصوات"],[Sparkles,"الموسيقى"],[Radio,"قنوات النشر"],[ShieldCheck,"سجل العمليات"],[Settings,"الإعدادات"]].map(([Icon,label,on]) => { const I=Icon as typeof Activity; return <a className={on?"active":""} key={label as string}><I size={19}/>{label as string}</a>})}</nav>
-      <div className="owner"><span>ك</span><div><b>حساب المالك</b><small>دخول آمن ومقيّد</small></div></div>
-    </aside>
+    <AdminSidebar active="/"/>
     <section className="content">
       <header><div><p className="eyebrow">الأحد، ١٠ أغسطس ٢٠٢٦</p><h1>صباح الخير 👋</h1><p>هذه حالة حلقة اليوم ومسار الإنتاج.</p></div><div className="live"><i/> النظام يعمل</div></header>
       <section className="hero">
