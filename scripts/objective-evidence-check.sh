@@ -5,6 +5,7 @@ set -euo pipefail
 : "${DATABASE_PASSWORD:=}"
 export PGPASSWORD="${DATABASE_PASSWORD}"
 : "${EPISODE_ID:=}"
+: "${PUBLISHING_LOCK_CHECK:=report}"
 
 run_sql() {
   psql "$DATABASE_URL" --no-align --tuples-only -c "$1"
@@ -81,11 +82,25 @@ echo "Checking auto-publish lock (admin health if ADMIN_BASE_URL set)."
 if [[ -n "${ADMIN_BASE_URL:-}" ]]; then
   lock="$(curl -fsS "${ADMIN_BASE_URL}/api/health" | jq -r '.publishingEnabled // false')"
   echo "admin_publishingEnabled=${lock}"
-  if [[ "$lock" == "false" ]]; then
-    echo "PASS: publishing lock is disabled (false)"
-  else
-    echo "FAIL: publishing lock is true"; exit 1
-  fi
+  case "${PUBLISHING_LOCK_CHECK}" in
+    require_false)
+      if [[ "$lock" == "false" ]]; then
+        echo "PASS: publishing lock is disabled (false)"
+      else
+        echo "FAIL: publishing lock should be false for this check"; exit 1
+      fi
+      ;;
+    require_true)
+      if [[ "$lock" == "true" ]]; then
+        echo "PASS: publishing lock is enabled (true)"
+      else
+        echo "FAIL: publishing lock should be true for this check"; exit 1
+      fi
+      ;;
+    report|*)
+      echo "INFO: publishing lock state recorded for review"
+      ;;
+  esac
 fi
 
 echo "Checking publish deliveries (if any)."

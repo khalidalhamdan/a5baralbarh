@@ -4,7 +4,6 @@ set -euo pipefail
 : "${ADMIN_BASE_URL:?Set ADMIN_BASE_URL}"
 : "${WORKER_TRIGGER_TOKEN:?Set WORKER_TRIGGER_TOKEN}"
 : "${DATABASE_URL:?Set DATABASE_URL}"
-: "${SESSION_COOKIE:?Set SESSION_COOKIE for publish calls}"
 : "${EPISODE_ID:=}"
 : "${OUT_FILE:=}"
 : "${WAIT_APPROVED_SECONDS:=1200}"
@@ -67,6 +66,8 @@ if [[ "$status" != "true" ]]; then
   echo "After publish, set PUBLISHING_ENABLED=false."
   exit 1
 fi
+
+: "${SESSION_COOKIE:?Set SESSION_COOKIE for authenticated browser session before controlled publish.}"
 
 AUTO_PUBLISH=true AUTO_EXIT=true OUT_FILE="${OUT_FILE}" ADMIN_BASE_URL="$ADMIN_BASE_URL" WORKER_TRIGGER_TOKEN="$WORKER_TRIGGER_TOKEN" DATABASE_URL="$DATABASE_URL" EPISODE_ID="$EPISODE_ID" SESSION_COOKIE="$SESSION_COOKIE" \
   ./scripts/staging-rehearsal-operator.sh
