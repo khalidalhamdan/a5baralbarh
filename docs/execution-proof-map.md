@@ -4,9 +4,8 @@ Use this to validate the objective end-to-end from your staging environment.
 
 ## 1) CI health (must pass before release)
 
-- `pnpm typecheck`
-- `pnpm test`
-- `pnpm build`
+- `pnpm objective:ci` (runs `pnpm typecheck`, `pnpm test`, `pnpm build`)
+- or run those commands individually.
 
 Why this repo: scripts and API routes already include:
 - `typecheck` gate in `.github/workflows/ci.yml`
@@ -104,5 +103,5 @@ EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> script
 
 ## Current known blockers (this execution environment)
 
-- No local Node runtime in this sandbox, so `pnpm typecheck/test/build` cannot execute here.
+- No local Node runtime in this sandbox, so `pnpm objective:ci` cannot execute here.
 - No external network access from shell, so GitHub and provider API checks are manual from your staging environment.

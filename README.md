@@ -103,6 +103,8 @@ This path will publish once, re-publish once for idempotency verification, expor
 For an objective-complete, end-to-end proof from one command:
 
 ```bash
+pnpm objective:ci  # run locally when Node is available
+
 export ADMIN_BASE_URL=https://<your-lovable-app>
 export WORKER_TRIGGER_TOKEN=<token>
 export DATABASE_URL=<postgres-url>
