@@ -88,13 +88,13 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - only one published row per channel in `publish_deliveries` by unique `idempotency_key`
    - no duplicate Telegram/transistor external IDs were appended
 
-9. Run machine validation:
+10. Run machine validation:
 
    ```bash
    export EPISODE_ID=<episode_id>
    ./scripts/verify-rehearsal.sh
    ```
 
-10. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
+11. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
 
-10. Immediately set `PUBLISHING_ENABLED=false` again.
+12. Immediately set `PUBLISHING_ENABLED=false` again.
