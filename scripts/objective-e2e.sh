@@ -5,6 +5,7 @@ set -euo pipefail
 : "${WORKER_TRIGGER_TOKEN:?Set WORKER_TRIGGER_TOKEN}"
 : "${DATABASE_URL:?Set DATABASE_URL}"
 : "${SESSION_COOKIE:?Set SESSION_COOKIE for publish calls}"
+: "${EPISODE_ID:=}"
 : "${OUT_FILE:=}"
 : "${WAIT_APPROVED_SECONDS:=1200}"
 : "${POLL_INTERVAL_SECONDS:=10}"
@@ -18,17 +19,19 @@ echo "=== Objective rehearsal run (end-to-end) ==="
 echo "1) Preflight"
 ./scripts/staging-preflight.sh
 
-echo "2) Trigger run + draft gate (needs_review)"
-RUN_OUTPUT="$(./scripts/staging-rehearsal-operator.sh)"
-printf '%s\n' "$RUN_OUTPUT"
-
-EPISODE_ID="$(printf '%s\n' "$RUN_OUTPUT" \
-  | awk -F 'Episode started/returned: ' '/Episode started\/returned: / {print $2}' \
-  | tail -n 1 | tr -d '\r')"
-
-if [[ -z "$EPISODE_ID" ]]; then
-  echo "ERROR: Could not determine episode id from rehearsal output."
-  exit 1
+if [[ -n "${EPISODE_ID}" ]]; then
+  echo "2) Reusing provided EPISODE_ID: ${EPISODE_ID}"
+else
+  echo "2) Trigger run + draft gate (needs_review)"
+  RUN_OUTPUT="$(./scripts/staging-rehearsal-operator.sh)"
+  printf '%s\n' "$RUN_OUTPUT"
+  EPISODE_ID="$(printf '%s\n' "$RUN_OUTPUT" \
+    | awk -F 'Episode started/returned: ' '/Episode started\/returned: / {print $2}' \
+    | tail -n 1 | tr -d '\r')"
+  if [[ -z "$EPISODE_ID" ]]; then
+    echo "ERROR: Could not determine episode id from rehearsal output."
+    exit 1
+  fi
 fi
 
 echo "Draft episode: ${EPISODE_ID}"
@@ -55,6 +58,16 @@ while true; do
 done
 
 echo "3) Controlled publish idempotency test"
+status="$(curl -fsS "${ADMIN_BASE_URL}/api/health" -H "Origin: ${ADMIN_BASE_URL}" | jq -r '.publishingEnabled // false')"
+if [[ "$status" != "true" ]]; then
+  echo "ERROR: Controlled publish requires runtime PUBLISHING_ENABLED=true in staging."
+  echo "Set it in staging secrets/env first, run:"
+  echo "  export PUBLISHING_ENABLED=true"
+  echo "  EPISODE_ID=${EPISODE_ID} pnpm rehearsal:staging:objective"
+  echo "After publish, set PUBLISHING_ENABLED=false."
+  exit 1
+fi
+
 AUTO_PUBLISH=true AUTO_EXIT=true OUT_FILE="${OUT_FILE}" ADMIN_BASE_URL="$ADMIN_BASE_URL" WORKER_TRIGGER_TOKEN="$WORKER_TRIGGER_TOKEN" DATABASE_URL="$DATABASE_URL" EPISODE_ID="$EPISODE_ID" SESSION_COOKIE="$SESSION_COOKIE" \
   ./scripts/staging-rehearsal-operator.sh
 

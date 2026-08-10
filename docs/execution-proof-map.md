@@ -41,6 +41,10 @@ ADMIN_BASE_URL=... WORKER_TRIGGER_TOKEN=... DATABASE_URL=... \
 ./scripts/objective-e2e.sh
 ```
 
+Notes for controlled publish window:
+- `./scripts/objective-e2e.sh` now requires `ADMIN_BASE_URL` to report `publishingEnabled=true` before step 3.
+- Keep publishing disabled for rehearsal draft and enable it only just before publish, then disable immediately after your run.
+
 ## 3) Owner approval gate
 
 Open episode in admin, approve, then confirm:
