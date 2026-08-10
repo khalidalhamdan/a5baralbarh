@@ -13,15 +13,15 @@ export PGPASSWORD="${DATABASE_PASSWORD:-}"
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 echo "Rehearsal start: $TS"
 
-RUN_ID=$(curl -sS -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
-  -H "Origin: $ADMIN_BASE_URL" \
-  -H "x-worker-token: $WORKER_TRIGGER_TOKEN" | jq -r '.episodeId // .error')
-
 PUBLISHING_ENABLED=$(curl -sS "$ADMIN_BASE_URL/api/health" -H "Origin: $ADMIN_BASE_URL" | jq -r '.publishingEnabled // false')
 if [[ "${PUBLISHING_ENABLED}" == "true" ]]; then
   echo "FAIL: Admin reports publishingEnabled=true. Keep publishing disabled for rehearsal."
   exit 1
 fi
+
+RUN_ID=$(curl -sS -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
+  -H "Origin: $ADMIN_BASE_URL" \
+  -H "x-worker-token: $WORKER_TRIGGER_TOKEN" | jq -r '.episodeId // .error')
 
 if [[ "$RUN_ID" == "" || "$RUN_ID" == "null" || "$RUN_ID" == "\"\"" ]]; then
   echo "run-daily response: $RUN_ID"
