@@ -75,11 +75,19 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    ./scripts/rehearsal-publish.sh
    ```
 
-7. In DB, confirm:
+7. Export a complete rehearsal evidence markdown:
+
+   ```bash
+   export EPISODE_ID=<episode_id>
+   export OUT_FILE=docs/rehearsals/2026-08-10-run-02.md
+   ./scripts/export-rehearsal-report.sh
+   ```
+
+8. In DB, confirm:
 
    - only one published row per channel in `publish_deliveries` by unique `idempotency_key`
    - no duplicate Telegram/transistor external IDs were appended
 
-8. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
+9. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
 
-9. Immediately set `PUBLISHING_ENABLED=false` again.
+10. Immediately set `PUBLISHING_ENABLED=false` again.
