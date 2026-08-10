@@ -8,9 +8,10 @@ Evidence required:
 Current evidence:
 - Present in repo: `.github/workflows/ci.yml` has all three commands.
 - Local execution is blocked by missing Node runtime (`node: not found`), so checks cannot complete here.
+- `pnpm objective:ci` is now available as a single local gate to run those three checks together.
 
 Remaining action:
-- Run CI-equivalent checks in Node-enabled environment: `pnpm typecheck`, `pnpm test`, `pnpm build`, or run a GitHub Actions run and capture passing logs.
+- Run CI-equivalent checks in Node-enabled environment: `pnpm objective:ci`, or run a GitHub Actions run and capture passing logs.
 
 ## Requirement: allowlisted RSS run produces one sourced 8–12 minute two-host needs_review episode with licensed looping music
 Evidence required:
@@ -62,14 +63,25 @@ Evidence required:
 - one completed markdown report in `docs/rehearsals/` with IDs/checksums/IDs/status/logs
 
 Current evidence:
-- `pnpm` tasks are wired in `package.json`; output currently unavailable because Node is missing locally (`node: not found`).
+- `pnpm objective:ci` now runs all three gates together: `typecheck`, `test`, `build`.
+- `pnpm tasks` are wired in `package.json`; output currently unavailable because Node is missing locally (`node: not found`).
 - Rehearsal checklist and templates are in place (`docs/rehearsals/README.md`, `docs/execution-proof-map.md`).
 
 Remaining action:
-1. Run locally or in CI: `pnpm typecheck`, `pnpm test`, `pnpm build`.
+1. Run locally or in CI: `pnpm objective:ci`.
 2. Run `pnpm rehearsal:staging:publish` and export report:
    `OUT_FILE=docs/rehearsals/<date>-run-N.md ./scripts/staging-e2e.sh`
 3. Store filled report and keep it as proof of end-to-end rehearsal.
 4. Run:
    `EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> scripts/objective-evidence-check.sh`
    and keep output as supplemental proof that draft + publish invariants hold.
+
+## Requirement: one documented end-to-end rehearsal
+
+Current evidence:
+- `scripts/objective-e2e.sh` exists and chains: preflight, draft gate, approval wait, controlled publish, strict verification, and objective evidence checks.
+- `README.md` includes the one-command staged rehearsal entry:
+  `pnpm rehearsal:staging:objective` (or `OUT_FILE=... pnpm rehearsal:staging:objective`).
+
+Remaining action:
+- Run the objective command on your staging environment using required credentials and secrets.
