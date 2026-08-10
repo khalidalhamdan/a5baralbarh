@@ -31,13 +31,22 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    curl -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
      -H "x-worker-token: $WORKER_TRIGGER_TOKEN" \
      -H "Origin: $ADMIN_BASE_URL"
+   ```
 
    You can also run:
 
-   ```bash
+   ```
    ./scripts/run-staging-rehearsal.sh
    ```
-   ```
+
+   The helper script validates:
+
+   - episode entered `needs_review`
+   - `estimated_seconds` is `480..720`
+   - at least 5 and at most 8 segments exist
+   - at least one source URL per segment
+   - final mix exists and is valid
+   - at least one licensed music track was attached
 
 3. Verify run outcome in DB:
 

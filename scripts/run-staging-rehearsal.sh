@@ -23,7 +23,31 @@ fi
 
 echo "Episode started/returned: $RUN_ID"
 
-psql "$DATABASE_URL" -c "select id,status,estimated_seconds from episodes where id='${RUN_ID}' order by created_at desc;"
+PSQL_FLAGS=(--no-align --tuples-only)
+
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select id,status,estimated_seconds,audio_checksum from episodes where id='${RUN_ID}';"
+
+echo "=== Episode checks ==="
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select 'segments',count(*) from script_segments s 
+  join scripts sc on sc.id=s.script_id where sc.episode_id='${RUN_ID}';"
+
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select 'sources',count(distinct jsonb_array_elements_text(source_urls)) 
+  from script_segments s join scripts sc on sc.id=s.script_id where sc.episode_id='${RUN_ID}';"
+
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select 'final_mix',count(*) from audio_assets where episode_id='${RUN_ID}' and kind='final_mix' and valid=true;"
+
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select 'needs_review_count',count(*) from episodes where id='${RUN_ID}' and status='needs_review';"
+
+psql "$DATABASE_URL" "${PSQL_FLAGS[@]}" -c "\
+  select 'music_tracks_used',coalesce(json_agg(m.id || ':' || m.license_type || ':' || m.license_evidence), '{}') 
+  from mix_versions mv 
+  join music_tracks m on m.id=mv.music_track_id 
+  where mv.episode_id='${RUN_ID}' and m.rights_confirmed=true;"
 
 psql "$DATABASE_URL" <<SQL
 select id,status,estimated_seconds from episodes where id='${RUN_ID}';
