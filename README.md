@@ -100,6 +100,28 @@ export AUTO_EXIT=true
 
 This path will publish once, re-publish once for idempotency verification, export a rehearsal report, and run strict DB validation.
 
+For an objective-complete, end-to-end proof from one command:
+
+```bash
+export ADMIN_BASE_URL=https://<your-lovable-app>
+export WORKER_TRIGGER_TOKEN=<token>
+export DATABASE_URL=<postgres-url>
+export SESSION_COOKIE='<browser session cookie>'
+./scripts/objective-e2e.sh
+```
+
+Or via npm:
+
+```bash
+pnpm rehearsal:staging:objective
+```
+
+You can also set a fixed output target with:
+
+```bash
+OUT_FILE=docs/rehearsals/$(date +%F)-objective.md pnpm rehearsal:staging:objective
+```
+
 ## Current implementation boundary
 
 The repository includes the production schema, dashboard, ingestion, structured AI script generation, resumable segmented ElevenLabs synthesis, R2-backed artifacts, FFmpeg music looping/mixing, approval controls, and idempotent Transistor/Telegram publishing. Real staging credentials, allowlisted feeds, licensed music, and listener-approved voices are still required before the first end-to-end rehearsal.
