@@ -11,7 +11,22 @@ export function assertTransition(from: EpisodeStatus,to: EpisodeStatus){if(!tran
 
 export const ScriptSegment = z.object({ id:z.string(), speaker:z.enum(["host_a","host_b"]), text:z.string().min(1), storyId:z.string(), sourceUrls:z.array(z.string().url()).min(1), pronunciationNotes:z.array(z.string()).default([]), estimatedSeconds:z.number().positive() });
 export type ScriptSegment = z.infer<typeof ScriptSegment>;
-export const GeneratedEpisode = z.object({ title:z.string(), description:z.string(), summary:z.string(), telegramCaption:z.string(), segments:z.array(ScriptSegment).min(1), sourceUrls:z.array(z.string().url()).min(1), estimatedSeconds:z.number().min(480).max(720), disclosure:z.string() });
+export const GeneratedEpisode = z.object({
+  title: z.string(),
+  description: z.string(),
+  summary: z.string(),
+  telegramCaption: z.string(),
+  segments: z.array(ScriptSegment).min(5).max(8),
+  sourceUrls: z.array(z.string().url()).min(1),
+  estimatedSeconds: z.number().min(480).max(720),
+  disclosure: z.string()
+}).refine((episode) => {
+  const speakers = new Set(episode.segments.map((segment) => segment.speaker));
+  return speakers.has("host_a") && speakers.has("host_b");
+}, {
+  path: ["segments"],
+  message: "Episode must include both host_a and host_b"
+});
 export type GeneratedEpisode = z.infer<typeof GeneratedEpisode>;
 
 export interface TextGenerationProvider { createEpisode(input:{ stories:Array<{id:string;title:string;content:string;sources:string[];sensitive:boolean}>; targetSeconds:number }):Promise<GeneratedEpisode> }
