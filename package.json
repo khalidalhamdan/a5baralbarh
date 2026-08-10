@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "preflight": "tsx src/preflight.ts",
     "worker": "tsx src/worker.ts"
   },
   "dependencies": {

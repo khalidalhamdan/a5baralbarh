@@ -65,7 +65,9 @@ export async function synthesizeAndMix(episodeId:string,scriptId:string,segments
     const [music]=await db()`select * from music_tracks where is_default=true and rights_confirmed=true order by created_at desc limit 1`;
     if (!music) throw new Error("A rights-confirmed default music track is required");
     const musicFile=path.join(work,"music-input");await download(await storage.signedUrl(music.storage_key,900),musicFile);
-    const duration=await probeDuration(speechOnly),finalFile=path.join(work,"final.mp3");await runFfmpeg(mixArgs(speechOnly,musicFile,finalFile,duration));
+    const duration=await probeDuration(speechOnly);
+    if(duration<480||duration>720)throw new Error(`Generated speech duration ${Math.round(duration)}s is outside the required 480–720s range`);
+    const finalFile=path.join(work,"final.mp3");await runFfmpeg(mixArgs(speechOnly,musicFile,finalFile,duration));
     const finalBytes=await readFile(finalFile),finalKey=`episodes/${episodeId}/final.mp3`,checksum=sha(finalBytes);await storage.put(finalKey,finalBytes,"audio/mpeg");
     const [asset]=await db()`insert into audio_assets(episode_id,kind,storage_key,content_type,duration_seconds,checksum) values(${episodeId},'final_mix',${finalKey},'audio/mpeg',${duration},${checksum}) returning id`;
     await db()`insert into mix_versions(episode_id,version,music_track_id,parameters,output_asset_id) values(${episodeId},1,${music.id},${db().json({ speechLufs:-16,musicVolume:.1,limiter:.95 })},${asset.id})`;

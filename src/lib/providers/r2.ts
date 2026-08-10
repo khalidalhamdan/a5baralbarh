@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { ObjectStorageProvider } from "@/lib/domain";
 
@@ -9,6 +9,7 @@ function connection() {
 }
 
 export class R2Storage implements ObjectStorageProvider {
+  async healthcheck(){const{client,bucket}=connection();await client.send(new HeadBucketCommand({Bucket:bucket}));return true}
   async put(key: string, body: Uint8Array, contentType: string) {
     const { client, bucket } = connection();
     await client.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: body, ContentType: contentType }));
