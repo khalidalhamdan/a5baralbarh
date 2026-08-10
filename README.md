@@ -105,3 +105,5 @@ This path will publish once, re-publish once for idempotency verification, expor
 The repository includes the production schema, dashboard, ingestion, structured AI script generation, resumable segmented ElevenLabs synthesis, R2-backed artifacts, FFmpeg music looping/mixing, approval controls, and idempotent Transistor/Telegram publishing. Real staging credentials, allowlisted feeds, licensed music, and listener-approved voices are still required before the first end-to-end rehearsal.
 
 See `docs/deployment.md` for the Lovable, Supabase, and worker orchestration connection sequence.
+
+Use `docs/lovable-replaces-railway-playbook.md` for the concrete click-to-run migration plan to move control-plane operation fully onto Lovable.
