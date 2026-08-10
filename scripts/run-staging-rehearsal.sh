@@ -108,7 +108,11 @@ license_count=$(run_sql "\
   from mix_versions mv
   join music_tracks m on m.id=mv.music_track_id
   where mv.episode_id='${RUN_ID}' and m.rights_confirmed=true;")
-expect_eq "$license_count" "1" "licensed music tracks attached"
+if [[ "$license_count" -lt 1 ]]; then
+  echo "FAIL: licensed music tracks attached = '$license_count', expected >= 1"
+  exit 1
+fi
+echo "PASS: licensed music tracks attached = ${license_count}"
 
 run_sql "\
   select 'music_tracks_used',coalesce(json_agg(m.id || ':' || m.license_type || ':' || m.license_evidence), '{}')

@@ -66,7 +66,10 @@ if (( host_count != 2 )); then
 fi
 
 need_num "$covered" "$segments" "segments_with_sources" >/dev/null
-need_num "$final_mix_valid" "1" "valid_final_mix" >/dev/null
+if (( final_mix_valid < 1 )); then
+  echo "FAIL: valid_final_mix=${final_mix_valid} (expected >=1)"; exit 1
+fi
+echo "PASS: valid_final_mix ${final_mix_valid}"
 if (( licensed_music < 1 )); then
   echo "FAIL: licensed_music_used=${licensed_music} (expected >=1)"; exit 1
 fi

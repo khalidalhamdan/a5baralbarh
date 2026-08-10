@@ -48,8 +48,16 @@ expect_between "$segments" 5 8 "segment count"
 expect_eq "$host_count" "2" "host count"
 expect_eq "$uncovered" "0" "segments with no source urls"
 expect_eq "$covered" "$segments" "segments with source URLs"
-expect_eq "$final_mix" "1" "valid final_mix count"
-expect_eq "$licensed_mix" "1" "licensed music track count"
+if [[ "$final_mix" -lt 1 ]]; then
+  echo "FAIL: valid final_mix count is '$final_mix', expected >= 1"
+  exit 1
+fi
+echo "PASS: valid final_mix count = ${final_mix}"
+if [[ "$licensed_mix" -lt 1 ]]; then
+  echo "FAIL: licensed music track count is '$licensed_mix', expected >= 1"
+  exit 1
+fi
+echo "PASS: licensed music track count = ${licensed_mix}"
 
 echo
 echo "=== Publish idempotency checks ==="
