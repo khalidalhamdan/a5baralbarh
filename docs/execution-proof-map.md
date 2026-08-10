@@ -83,6 +83,12 @@ Record:
 - cost totals
 - owner approval timestamp
 
+You can run a deterministic post-run check:
+
+```bash
+EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> scripts/objective-evidence-check.sh
+```
+
 ## Current known blockers (this execution environment)
 
 - No local Node runtime in this sandbox, so `pnpm typecheck/test/build` cannot execute here.

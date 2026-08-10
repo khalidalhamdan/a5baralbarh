@@ -70,3 +70,6 @@ Remaining action:
 2. Run `pnpm rehearsal:staging:publish` and export report:
    `OUT_FILE=docs/rehearsals/<date>-run-N.md ./scripts/staging-e2e.sh`
 3. Store filled report and keep it as proof of end-to-end rehearsal.
+4. Run:
+   `EPISODE_ID=<episode-id> DATABASE_URL=... ADMIN_BASE_URL=https://<staging> scripts/objective-evidence-check.sh`
+   and keep output as supplemental proof that draft + publish invariants hold.
