@@ -84,4 +84,13 @@ if [[ -n "${OUT_FILE}" ]]; then
   echo "6) Rehearsal report exported to: ${OUT_FILE}"
 fi
 
+echo "7) Confirm publishing lock is disabled again"
+final_lock="$(curl -fsS "${ADMIN_BASE_URL}/api/health" -H "Origin: ${ADMIN_BASE_URL}" | jq -r '.publishingEnabled // false')"
+if [[ "$final_lock" != "false" ]]; then
+  echo "ERROR: publishing lock is '${final_lock}'. It should be false after rehearsal."
+  echo "Set PUBLISHING_ENABLED=false in staging secrets/env immediately."
+  exit 1
+fi
+echo "PASS: publishing lock is disabled (false)"
+
 echo "Objective end-to-end run completed for episode ${EPISODE_ID}"
