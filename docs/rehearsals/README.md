@@ -45,6 +45,30 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
 
    This runs the daily trigger + gating checks in one step, then pauses for owner review.
 
+   Or use the compact stage-gated flow:
+
+   ```bash
+   export ADMIN_BASE_URL=https://...
+   export WORKER_TRIGGER_TOKEN=...
+   export DATABASE_URL=...
+   pnpm rehearsal:staging:dry
+   ```
+
+   For controlled publish and idempotency test, add:
+
+   ```bash
+   export SESSION_COOKIE='...'
+   export AUTO_PUBLISH=true
+   pnpm rehearsal:staging:publish
+   ```
+
+   Optional report output:
+
+   ```bash
+   export OUT_FILE=docs/rehearsals/$(date +%F-run)-01.md
+   pnpm rehearsal:staging:publish
+   ```
+
 3. Alternatively, trigger one daily run from staging admin/job directly:
 
    ```bash
@@ -108,7 +132,7 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - only one published row per channel in `publish_deliveries` by unique `idempotency_key`
    - no duplicate Telegram/transistor external IDs were appended
 
-11. Run machine validation:
+10. Run machine validation:
 
    ```bash
    export EPISODE_ID=<episode_id>

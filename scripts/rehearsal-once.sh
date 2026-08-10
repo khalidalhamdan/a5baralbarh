@@ -42,8 +42,8 @@ if [[ "${AUTO_PUBLISH}" == "true" ]]; then
   echo "Set PUBLISHING_ENABLED=true and run publish step with session cookie."
   echo "Example:"
   echo "  export EPISODE_ID=$EPISODE_ID"
-  echo "  export SESSION_COOKIE='...'
-  AUTO_EXIT=true ./scripts/staging-rehearsal-operator.sh"
+  echo "  export SESSION_COOKIE='...'"
+  echo "  AUTO_EXIT=true ./scripts/staging-rehearsal-operator.sh"
 else
   echo "Skipping publish test in this run."
 fi

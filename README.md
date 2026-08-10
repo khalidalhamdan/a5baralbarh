@@ -21,6 +21,13 @@ Arabic-first control room and production pipeline for a daily, owner-approved Sa
 
 Run `pnpm preflight` after adding staging credentials. It performs read-only provider checks and fails if public publishing is enabled.
 
+Use the stage-gated rehearsal scripts:
+
+- Dry rehearsal (draft + checks, no publish):
+  - `pnpm rehearsal:staging:dry`
+- Controlled publish rehearsal with controlled idempotency test:
+  - `pnpm rehearsal:staging:publish`
+
 ## Production topology
 
 - Build the Arabic admin visually in Lovable and connect it to the same Supabase-compatible database. Keep privileged provider calls server-side.
@@ -30,6 +37,13 @@ Run `pnpm preflight` after adding staging credentials. It performs read-only pro
 - Configure Supabase backups and point-in-time recovery before launch.
 - Use GitHub for source control and CI/CD, but treat Lovable as the deployment host for the UI where possible.
 - If you are fully moving from Railway, treat this README + `docs/lovable-connect-playbook.md` + `docs/lovable-first-setup-checklist.md` as the canonical path.
+
+### Lovable replacement map
+
+- **Lovable Jobs** → scheduled execution (`POST /api/ops/run-daily`).
+- **Lovable/connected Supabase** → DB + auth + storage.
+- **Lovable Secrets** → all provider/API credentials.
+- **Not covered / external still needed** → long-running FFmpeg + speech mix container (`Dockerfile.worker`) and any containerized orchestration that exceeds serverless limits.
 
 ## Voice acceptance gate
 

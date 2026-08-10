@@ -3,20 +3,32 @@
 ## What Lovable replaces from Railway
 
 - **Scheduling / jobs orchestration**: use **Lovable Jobs** (cron-like schedules).
-- **Lightweight server endpoints**: keep in this repo and run through Lovable deploy, or use **Lovable Edge Functions** for short callbacks.
-- **Secret handling**: keep all sensitive keys in **Lovable Cloud → Secrets**.
+- **Lightweight server endpoints**: keep this repo in place and expose endpoint jobs through a Lovable-deployed Next.js control app, or use **Lovable Edge Functions** for short callbacks.
+- **Secret handling**: keep all sensitive keys in **Lovable Cloud → Secrets** (not in code).
 - **UI deployment**: keep the Arabic admin in Lovable with GitHub-sync (one branch at a time).
+- **Project ownership for backend (optional)**: use your own Supabase (your account/risk profile) instead of Lovable Cloud.
 
 Still needed outside Lovable:
 
 - **Long-running audio jobs** (FFmpeg + TTS + mixing) if they exceed Lovable Job runtime limits.
 - **Optional external container host** (Cloud Run, ECS, VPS, etc.) for `Dockerfile.worker`.
+- **Transistor publishing callbacks/telemetry** to persist external API state and Telegram confirmations (depends on stable external APIs).
 
 ## 1) Create source-of-truth linkage
 
 1. In GitHub: keep this repository as the source branch you want Lovable to sync.
 2. In Lovable: open **Project settings → Git → GitHub** and connect the same branch.
 3. Confirm one-way and two-way sync in settings before deployment.
+
+### Recommended production topology with one control plane
+
+- **Lovable (control plane + admin):** Next.js dashboard, schedule trigger, owner auth, approvals, source management, publishing toggles.
+- **Your chosen Supabase project:** DB/auth/RLS/storage.
+- **External worker runtime (recommended):** runs `./src/worker.ts`, does RSS ingestion, AI synthesis, FFmpeg mix, object storage writes.
+- **Transistor/Telegram:** keep outbound publishing from admin worker API routes so owner can audit every action.
+
+Why external worker remains:
+- Audio generation and clipping are long-running; this is the main reason to avoid placing heavy jobs purely in Lovable unless you’ve validated the runtime limits.
 
 ## 2) Configure runtime secrets
 

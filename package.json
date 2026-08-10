@@ -10,7 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "preflight": "tsx src/preflight.ts",
-    "worker": "tsx src/worker.ts"
+    "worker": "tsx src/worker.ts",
+    "rehearsal:staging:dry": "AUTO_PUBLISH=false AUTO_EXIT=false ./scripts/staging-e2e.sh",
+    "rehearsal:staging:publish": "AUTO_PUBLISH=true AUTO_EXIT=true ./scripts/staging-e2e.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",

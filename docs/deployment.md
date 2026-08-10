@@ -8,6 +8,7 @@ Use this as your default choice if you want one control plane:
 - **Replaces Railway for short API execution:** **Lovable Edge Functions** (secure callbacks and lightweight ops).
 - **Replaces Railway for DB/auth/storage:** **Supabase backend** (via your own Supabase project).
 - **Still needs an external runtime:** long-running FFmpeg/TTS audio mixing and any heavy background container work can continue in `Dockerfile.worker` on your chosen host.
+- **Lovable Cloud adds**: managed deployment, secrets, and cron-like jobs so you can retire Railway for control-plane pieces.
 
 If you use Lovable as control plane, keep this repo as the single source of truth and sync it to the Lovable-linked GitHub branch.
 
@@ -42,7 +43,8 @@ Lovable is used as the control plane and UI. Worker execution can stay in this r
 ### 3.1 Use Lovable only for orchestration (recommended)
 
 1. Keep this repository as the worker source (`src/worker.ts`).
-2. In Lovable **Cloud → Jobs**, create a daily scheduled job at `06:00 AM` in `Asia/Riyadh` that triggers the protected endpoint `POST /api/ops/run-daily` with header `x-worker-token: <WORKER_TRIGGER_TOKEN>`. The endpoint calls `collectDaily()` in the worker logic. Use endpoint-driven invocation to avoid editing files directly in Lovable for heavy code.
+2. In Lovable **Cloud → Jobs**, create a daily scheduled job at `06:00 AM` in `Asia/Riyadh` that triggers the protected endpoint `POST /api/ops/run-daily` with header `x-worker-token: <WORKER_TRIGGER_TOKEN>`. (Jobs are exposed in the Jobs view and created via Lovable chat in current Lovable flows.)
+   The endpoint calls `collectDaily()` in the worker logic. Use endpoint-driven invocation to avoid editing files directly in Lovable for heavy code.
 3. Keep `PUBLISHING_ENABLED=false` for staging preflight and draft-only runs.
 4. Add all secrets in Lovable **Secrets** only.
 5. Run `pnpm preflight` as a one-off command (staging) and resolve any failed check before enabling jobs.
