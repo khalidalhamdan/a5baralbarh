@@ -18,3 +18,51 @@ Record:
 - failures, retries, cost, and final decision
 
 Public auto-publishing must remain disabled throughout all seven rehearsals.
+
+## How to run one rehearsal (operator sequence)
+
+1. Confirm secrets and safety
+   - `PUBLISHING_ENABLED=false`
+   - `WORKER_TRIGGER_TOKEN`, provider keys, Supabase URL/key, and `WORKER_TRIGGER_TOKEN` are set
+   - one default music track has `rights_confirmed=true`
+2. Trigger one daily run from staging admin/job:
+
+   ```bash
+   curl -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
+     -H "x-worker-token: $WORKER_TRIGGER_TOKEN" \
+     -H "Origin: $ADMIN_BASE_URL"
+   ```
+
+3. Verify run outcome in DB:
+
+   - latest episode status is `needs_review`
+   - `duration_seconds` between `480` and `720` in latest final mix
+   - at least one `music_tracks.rights_confirmed=true` row exists and was used
+   - final asset has `kind='final_mix'`
+
+4. Owner approval:
+
+   - open episode in admin and click approve
+   - ensure `episode.approved` event appears in `audit_events`
+
+5. Enable staging publish once for this run:
+
+   - set `PUBLISHING_ENABLED=true` in staging runtime only for the approved run
+
+6. Call publish twice to verify idempotency:
+
+   ```bash
+   curl -X POST "$ADMIN_BASE_URL/api/episodes/{episodeId}/publish" \
+     -b "$COOKIE" \
+     -H "Origin: $ADMIN_BASE_URL"
+   # call the exact same request again within seconds/minutes
+   ```
+
+7. In DB, confirm:
+
+   - only one published row per channel in `publish_deliveries` by unique `idempotency_key`
+   - no duplicate Telegram/transistor external IDs were appended
+
+8. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
+
+9. Immediately set `PUBLISHING_ENABLED=false` again.
