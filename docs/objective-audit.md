@@ -18,7 +18,7 @@ Evidence required:
 - one staged run from active feeds only (`feeds.active=true`)
 - episode ends in `needs_review`
 - 5–8 segments, both `host_a` and `host_b`, each with source URLs
-- final mix valid and one licensed `default` music track attached
+- final mix valid and licensed music track attached
 
 Current evidence:
 - Worker run path checks active feeds and transforms into episode script using `fetchFeed` and open-ended feed allowlist.
