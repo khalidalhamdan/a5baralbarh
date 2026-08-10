@@ -13,7 +13,12 @@ export PGPASSWORD="${DATABASE_PASSWORD:-}"
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 echo "Rehearsal start: $TS"
 
-PUBLISHING_ENABLED=$(curl -sS "$ADMIN_BASE_URL/api/health" -H "Origin: $ADMIN_BASE_URL" | jq -r '.publishingEnabled // false')
+HEALTH_JSON=$(curl -sS "$ADMIN_BASE_URL/api/health" -H "Origin: $ADMIN_BASE_URL" || true)
+if [[ -z "${HEALTH_JSON}" ]]; then
+  echo "FAIL: Unable to read admin health endpoint."
+  exit 1
+fi
+PUBLISHING_ENABLED=$(echo "$HEALTH_JSON" | jq -r '.publishingEnabled // false')
 if [[ "${PUBLISHING_ENABLED}" == "true" ]]; then
   echo "FAIL: Admin reports publishingEnabled=true. Keep publishing disabled for rehearsal."
   exit 1
