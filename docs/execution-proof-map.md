@@ -32,6 +32,15 @@ Expected:
 
 SQL/command checks are already in `scripts/run-staging-rehearsal.sh`.
 
+You can run the full sequence from one command (including approval wait + publish verification + evidence output) using:
+
+```bash
+OUT_FILE=docs/rehearsals/$(date +%F)-objective.md \ 
+SESSION_COOKIE='<browser session cookie>' \
+ADMIN_BASE_URL=... WORKER_TRIGGER_TOKEN=... DATABASE_URL=... \
+./scripts/objective-e2e.sh
+```
+
 ## 3) Owner approval gate
 
 Open episode in admin, approve, then confirm:
