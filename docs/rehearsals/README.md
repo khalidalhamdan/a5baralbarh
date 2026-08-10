@@ -25,7 +25,18 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - `PUBLISHING_ENABLED=false`
    - `WORKER_TRIGGER_TOKEN`, provider keys, Supabase URL/key, and `WORKER_TRIGGER_TOKEN` are set
    - one default music track has `rights_confirmed=true`
-2. Trigger one daily run from staging admin/job:
+2. Use the operator (recommended, one-command sequence):
+
+   ```bash
+   export ADMIN_BASE_URL=https://...
+   export WORKER_TRIGGER_TOKEN=...
+   export DATABASE_URL=...
+   ./scripts/staging-rehearsal-operator.sh
+   ```
+
+   This runs the daily trigger + gating checks in one step, then pauses for owner review.
+
+3. Alternatively, trigger one daily run from staging admin/job directly:
 
    ```bash
    curl -X POST "$ADMIN_BASE_URL/api/ops/run-daily" \
@@ -50,23 +61,23 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    - at least one licensed music track was attached
    - prints publish delivery rows (if any) for idempotency verification
 
-3. Verify run outcome in DB:
+4. Verify run outcome in DB:
 
    - latest episode status is `needs_review`
    - `duration_seconds` between `480` and `720` in latest final mix
    - at least one `music_tracks.rights_confirmed=true` row exists and was used
    - final asset has `kind='final_mix'`
 
-4. Owner approval:
+5. Owner approval:
 
    - open episode in admin and click approve
    - ensure `episode.approved` event appears in `audit_events`
 
-5. Enable staging publish once for this run:
+6. Enable staging publish once for this run:
 
    - set `PUBLISHING_ENABLED=true` in staging runtime only for the approved run
 
-6. Call publish twice to verify idempotency:
+7. Call publish twice to verify idempotency:
 
    ```bash
    # set SESSION_COOKIE from your authenticated browser session
@@ -75,7 +86,7 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    ./scripts/rehearsal-publish.sh
    ```
 
-7. Export a complete rehearsal evidence markdown:
+8. Export a complete rehearsal evidence markdown:
 
    ```bash
    export EPISODE_ID=<episode_id>
@@ -83,18 +94,18 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
    ./scripts/export-rehearsal-report.sh
    ```
 
-8. In DB, confirm:
+9. In DB, confirm:
 
    - only one published row per channel in `publish_deliveries` by unique `idempotency_key`
    - no duplicate Telegram/transistor external IDs were appended
 
-10. Run machine validation:
+11. Run machine validation:
 
    ```bash
    export EPISODE_ID=<episode_id>
    ./scripts/verify-rehearsal.sh
    ```
 
-11. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
+12. Capture evidence in `docs/rehearsals/YYYY-MM-DD-run-N.md` (timestamps, IDs, checksums, costs, failures/retries, final status)
 
-12. Immediately set `PUBLISHING_ENABLED=false` again.
+13. Immediately set `PUBLISHING_ENABLED=false` again.

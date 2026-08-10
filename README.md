@@ -46,6 +46,36 @@ Before generating production episodes, assign distinct Saudi Arabic voice IDs an
 - Back up the database and successfully test restoration.
 - Switch `PUBLISHING_ENABLED=true` only after the checklist passes.
 
+## Staging rehearsal (recommended)
+
+From a machine with `.env` configured for staging:
+
+```bash
+export ADMIN_BASE_URL=https://<your-lovable-app>
+export WORKER_TRIGGER_TOKEN=<token>
+export DATABASE_URL=<postgres-url>
+./scripts/staging-rehearsal-operator.sh
+```
+
+The operator runs:
+
+- `/api/ops/run-daily`
+- pre-publish gates (`needs_review`, 8–12 minutes target, 5–8 sourced segments, two hosts, final mix present, licensed music present)
+- pauses for owner approval
+
+Then, for rehearsal publish proof:
+
+```bash
+export ADMIN_BASE_URL=https://<your-lovable-app>
+export SESSION_COOKIE="<browser session cookie>"
+export EPISODE_ID=<episode-id-from-console>
+export AUTO_PUBLISH=true
+export AUTO_EXIT=true
+./scripts/staging-rehearsal-operator.sh
+```
+
+This path will publish once, re-publish once for idempotency verification, export a rehearsal report, and run strict DB validation.
+
 ## Current implementation boundary
 
 The repository includes the production schema, dashboard, ingestion, structured AI script generation, resumable segmented ElevenLabs synthesis, R2-backed artifacts, FFmpeg music looping/mixing, approval controls, and idempotent Transistor/Telegram publishing. Real staging credentials, allowlisted feeds, licensed music, and listener-approved voices are still required before the first end-to-end rehearsal.
