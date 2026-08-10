@@ -29,6 +29,7 @@ Run `pnpm preflight` after adding staging credentials. It performs read-only pro
 - Keep private audio in R2. Store only object keys or short-lived signed URLs in the database.
 - Configure Supabase backups and point-in-time recovery before launch.
 - Use GitHub for source control and CI/CD, but treat Lovable as the deployment host for the UI where possible.
+- If you are fully moving from Railway, treat this README + `docs/lovable-connect-playbook.md` + `docs/lovable-first-setup-checklist.md` as the canonical path.
 
 ## Voice acceptance gate
 
