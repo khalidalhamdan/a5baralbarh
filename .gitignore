@@ -1,0 +1,13 @@
+node_modules
+.pnpm-store
+.next
+.env
+.env.local
+coverage
+dist
+tmp
+*.mp3
+*.wav
+*.log
+*.tsbuildinfo
+.DS_Store

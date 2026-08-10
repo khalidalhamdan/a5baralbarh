@@ -1,0 +1,3 @@
+import { spawn } from "node:child_process";
+export function mixArgs(speech:string,music:string,output:string){return["-y","-i",speech,"-stream_loop","-1","-i",music,"-filter_complex","[0:a]loudnorm=I=-16:TP=-1.5:LRA=11[s];[1:a]volume=0.10,afade=t=in:st=0:d=2[m];[m][s]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=600[duck];[s][duck]amix=inputs=2:duration=first:weights='1 1',alimiter=limit=0.95,afade=t=out:st=598:d=2[out]","-map","[out]","-c:a","libmp3lame","-b:a","128k",output]}
+export async function runFfmpeg(args:string[]){await new Promise<void>((resolve,reject)=>{const p=spawn("ffmpeg",args,{stdio:"inherit"});p.on("error",reject);p.on("exit",c=>c===0?resolve():reject(new Error(`ffmpeg exited ${c}`)))})}

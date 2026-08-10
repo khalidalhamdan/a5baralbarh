@@ -1,0 +1,11 @@
+services:
+  admin:
+    build: .
+    env_file: .env
+    ports: ["3000:3000"]
+    restart: unless-stopped
+  worker:
+    build: .
+    env_file: .env
+    command: ["pnpm","worker"]
+    restart: "no"
