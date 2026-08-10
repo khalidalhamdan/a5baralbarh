@@ -69,10 +69,10 @@ Public auto-publishing must remain disabled throughout all seven rehearsals.
 6. Call publish twice to verify idempotency:
 
    ```bash
-   curl -X POST "$ADMIN_BASE_URL/api/episodes/{episodeId}/publish" \
-     -b "$COOKIE" \
-     -H "Origin: $ADMIN_BASE_URL"
-   # call the exact same request again within seconds/minutes
+   # set SESSION_COOKIE from your authenticated browser session
+   export EPISODE_ID=<episode_id>
+   export SESSION_COOKIE='<cookie-string>'
+   ./scripts/rehearsal-publish.sh
    ```
 
 7. In DB, confirm:
